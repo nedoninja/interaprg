@@ -4,5 +4,9 @@ void setup() {
 }
 
 void loop() {
-  int temp = analogRead(13);
+  int tempo = analogRead(13);
+  float temp = float(25 * tempo) / float(4096);
+  Serial.print("\nTemp = ");
+  Serial.print(temp);
+  delay(500);
 }
