@@ -5,5 +5,4 @@ void setup() {
 
 void loop() {
   int temp = analogRead(13);
-  delay(500);
 }
