@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include <WiFi.h>
 
 // 1 плата улица
@@ -8,7 +7,7 @@ WiFiClient localClient;
 const char* ssid = "smartpark_service";
 const char* password = "smartpark_2021";
 
-const int port = 4242;
+const int port = 80;
 const char* ip = "192.168.88.245";
 
 String myPacket;
@@ -41,8 +40,9 @@ void setup() {
 void loop() {
   int tempo = analogRead(13);
   float temp = float(27.68 * tempo) / float(4096);
-  String s;
+  String s = "";
   s = s + "1;" + String(temp) + '\n';
+  Serial.println(tempo);
   myPacket = s;
   sendRequest();
   delay(200);
