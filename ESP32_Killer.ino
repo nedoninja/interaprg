@@ -34,11 +34,11 @@ void setup() {
     Serial.print(".");
   }
   Serial.println(WiFi.localIP());
-  pinMode(13, INPUT);
+  pinMode(12, INPUT);
 }
 
 void loop() {
-  int tempo = analogRead(13);
+  int tempo = analogRead(12);
   float temp = float(27.68 * tempo) / float(4096);
   String s = "";
   s = s + "1;" + String(temp) + '\n';
