@@ -11,6 +11,8 @@ print(f"Подключение установлено с {client_address}")
 while True:
     data = client_socket.recv(1024)
     print(f"Получены данные: {data}")
+    if(input() == "1"):
+        client_socket.sendall("0;2".encode())
 
 # client_socket.close()
 # server_socket.close()
