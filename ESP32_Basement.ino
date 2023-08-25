@@ -6,15 +6,14 @@
 
 WiFiClient localClient;
 
-const char* ssid = "smartpark_service";
-const char* password = "smartpark_2021";
+const char* ssid = "rasp3";
+const char* password = "";
 
 const int port = 80;
-const char* ip = "192.168.88.245";
+const char* ip = "10.42.0.1";
 
-String myPacket;
 
-void sendRequest() {
+void sendRequest(String myPacket) {
 
   if (localClient.connect(ip, port)) {            
 
@@ -34,6 +33,7 @@ String getPacket(){
       String str = localClient.readStringUntil('\n'); 
       Serial.print("Got packet: ");
       Serial.println(str);
+      return str;
 }
 
 void beg(){
@@ -48,7 +48,7 @@ void beg(){
 
 Servo myServo;              // объявление "форточки"
 
-const int motoPin = 14;     // номер контакта вентилятора
+const int motoPin = 27;     // номер контакта вентилятора
 const int freq = 800;       // частота ШИМ, Гц
 const int ledChannel = 0;   // канал ШИМ на ESP32 (разобраться)
 const int res = 8;          // квантование ШИМ, бит
@@ -56,7 +56,7 @@ const int res = 8;          // квантование ШИМ, бит
 void setup() {
   Serial.begin(9600);
   pinMode(34, INPUT);                   // объявление порта термодатчика
-  myServo.attach("30");                   // "инициализация" "форточки"                                             ///  Нужно поставить нормальный пин
+  myServo.attach(15);                   // "инициализация" "форточки"
 
   beg();
 
@@ -71,26 +71,29 @@ void loop() {
   float temp1 = float(27.68 * temp_datchik) / float(4096);     // расчёт температуры в "подвале"
   String s = "";
   s = s + "2;" + String(temp1);
-  sendRequest();
+
+  Serial.println(temp1);
+  
+  sendRequest(s);
 
   String pack = getPacket();
 
   /// Pack состоит из "Состояние форточки; Скорость вентилятора"
-  if(pack[0] == 1)
-    myServo.write(179)      // открыли форточку
-  else myServo.write(0)     // Закрыли форточку
+  if(pack.length()!=0){
+    
+   if(pack[0] == '1')
+     myServo.write(175);      // открыли форточку
+   else myServo.write(2);     // Закрыли форточку
 
-  int spd = 0;
-  for(int i=2; i<pack.size(); i++){
-    spd *= 10;
-    spd += pack[i];
+   int spd = 0;
+   for(int i=2; i < pack.length(); i++){
+     spd *= 10;
+     spd += (pack[i]-'0');
+   }
+   // пробная программа управления вентилятором  
+   ledcWrite(ledChannel, spd);       // ШИМ на вентилятор
+   ledcWrite(1, spd);       // ШИМ на встроенный светодиод
   }
-
-  spd = map(spd, 0, 20, 0, 255);
   
-  // пробная программа управления вентилятором  
-  ledcWrite(ledChannel, spd);       // ШИМ на вентилятор
-  ledcWrite(1, spd);       // ШИМ на встроенный светодиод
-  
-  delay(250);
+  delay(1000);
 }
