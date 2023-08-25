@@ -5,15 +5,13 @@
 
 WiFiClient localClient;
 
-const char* ssid = "smartpark_service";
-const char* password = "smartpark_2021";
+const char* ssid = "rasp3";
+const char* password = "";
 
 const int port = 80;
-const char* ip = "192.168.88.245";
+const char* ip = "10.42.0.1";
 
-String myPacket;
-
-void sendRequest() {
+void sendRequest(String myPacket) {
 
   if (localClient.connect(ip, port)) {
 
@@ -44,11 +42,9 @@ void setup() {
 void loop() {
   int tempo = analogRead(34);
   float temp = float(27.68 * tempo) / float(4096);
-  Serial.print("\nTemp = ");
-  Serial.print(temp);
+  Serial.println(temp);
   String s = "";
-  s = s + "1;" + String(temp) + '\n';
-  myPacket = s;
-  sendRequest();
+  s = s + "1;" + String(temp);
+  sendRequest(s);
   delay(1000);
 }
